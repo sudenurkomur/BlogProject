@@ -1,0 +1,54 @@
+﻿@model List<BlogProject.Models.Blog>
+
+@{
+    ViewData["Title"] = "Blog Listesi";
+}
+
+<h2>Bloglar</h2>
+
+<p class="alert alert-info">@Model?.Count adet blog bulundu.</p>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Görsel</th> <!-- 🔥 Yeni sütun -->
+                <th>Başlık</th>
+                <th>Yazar</th>
+                <th>Kategori</th>
+                <th>Yayın Tarihi</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var blog in Model)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(blog.ImageBase64))
+                        {
+                            <img src="data:image/jpeg;base64,@blog.ImageBase64" width="100" class="img-thumbnail" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Yok</span>
+                        }
+                    </td>
+                    <td>@blog.Title</td>
+                    <td>@blog.User?.Username</td>
+                    <td>@blog.Category?.Name</td>
+                    <td>@blog.PublishDate.ToShortDateString()</td>
+                    <td>
+                        <a href="/Blog/Details/@blog.Id" class="btn btn-sm btn-primary">Detay</a>
+                        <a href="/Blog/Delete/@blog.Id" class="btn btn-sm btn-danger">Sil</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">Henüz blog yazısı bulunmuyor.</p>
+}
