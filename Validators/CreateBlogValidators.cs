@@ -1,9 +1,9 @@
-﻿using BlogProject.DTOs;
+﻿using BlogProject.Requests;
 using FluentValidation;
 
 namespace BlogProject.Validators
 {
-    public class CreateBlogValidator : AbstractValidator<CreateBlogDTO>
+    public class CreateBlogValidator : AbstractValidator<CreateBlogRequest>
     {
         public CreateBlogValidator()
         {

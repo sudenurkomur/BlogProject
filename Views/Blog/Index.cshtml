@@ -41,7 +41,10 @@
                     <td>@blog.PublishDate.ToShortDateString()</td>
                     <td>
                         <a href="/Blog/Details/@blog.Id" class="btn btn-sm btn-primary">Detay</a>
-                        <a href="/Blog/Delete/@blog.Id" class="btn btn-sm btn-danger">Sil</a>
+                        @if (User.Identity?.IsAuthenticated == true && blog.User.Username == User.Identity.Name)
+                        {
+                            <a asp-action="Delete" asp-route-id="@blog.Id" class="btn btn-danger">Sil</a>
+                        }
                     </td>
                 </tr>
             }

@@ -6,5 +6,7 @@ namespace BlogProject.Repositories.Interfaces
     {
         List<User> GetAll();
         Guid GetFirstUserId(); // test için geçici
+
+        User? GetByUsername(string username);
     }
 }

@@ -1,12 +1,17 @@
 ﻿using BlogProject.Models;
 using BlogProject.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using BlogProject.DTOs;
+using BlogProject.Requests;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 
 
 
 namespace BlogProject.Controllers
 {
+
+    [Authorize]
     public class BlogController : Controller
     {
         private readonly IBlogService _blogService;
@@ -22,7 +27,7 @@ namespace BlogProject.Controllers
         }
 
 
-
+        [AllowAnonymous]
         // Blogları listele
         public IActionResult Index()
         {
@@ -31,6 +36,7 @@ namespace BlogProject.Controllers
         }
 
         // Detay
+        [AllowAnonymous]
         public IActionResult Details(Guid id)
         {
             var blog = _blogService.GetBlogById(id);
@@ -50,28 +56,31 @@ namespace BlogProject.Controllers
 
         // POST: Blog/Create
         [HttpPost]
-        public IActionResult Create(CreateBlogDTO dto)
+        public IActionResult Create(CreateBlogRequest request)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.Categories = _categoryService.GetAll();
-                return View(dto);
+                return View(request);
             }
+
+            var username = User.Identity?.Name;
+            var user = _userService.GetByUsername(username); 
 
             var blog = new Blog
             {
                 Id = Guid.NewGuid(),
-                Title = dto.Title,
-                Content = dto.Content,
+                Title = request.Title,
+                Content = request.Content,
                 PublishDate = DateTime.Now,
-                CategoryId = dto.CategoryId,
-                UserId = _userService.GetFirstUserId() // ileride login sonrası değişecek
+                CategoryId = request.CategoryId,
+                UserId = user.Id
             };
 
-            if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+            if (request.ImageFile != null && request.ImageFile.Length > 0)
             {
                 using var ms = new MemoryStream();
-                dto.ImageFile.CopyTo(ms);
+                request.ImageFile.CopyTo(ms);
                 blog.ImageBase64 = Convert.ToBase64String(ms.ToArray());
             }
 
@@ -86,6 +95,12 @@ namespace BlogProject.Controllers
             var blog = _blogService.GetBlogById(id);
             if (blog == null)
                 return NotFound();
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (blog.UserId.ToString() != currentUserId)
+            {
+                return Forbid(); // başka birinin blogunu silemez
+            }
 
             _blogService.DeleteBlog(blog);
             return RedirectToAction("Index");

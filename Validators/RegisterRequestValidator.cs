@@ -1,16 +1,15 @@
-﻿using BlogProject.DTOs;
+﻿using BlogProject.Requests;
 using FluentValidation;
-using global::BlogProject.DTOs;
-
+using global::BlogProject.Requests;
 
 namespace BlogProject.Validators
 {
 
     namespace BlogProject.Validators
     {
-        public class RegisterValidator : AbstractValidator<RegisterDTO>
+        public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
         {
-            public RegisterValidator()
+            public RegisterRequestValidator()
             {
                 RuleFor(x => x.Username)
                     .NotEmpty().WithMessage("Kullanıcı adı boş olamaz.")

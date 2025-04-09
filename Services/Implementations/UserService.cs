@@ -1,6 +1,7 @@
 ﻿using BlogProject.Models;
 using BlogProject.Repositories.Interfaces;
 using BlogProject.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogProject.Services.Implementations
 {
@@ -17,7 +18,10 @@ namespace BlogProject.Services.Implementations
         {
             return _userRepository.GetAll();
         }
-
+        public User GetByUsername(string username)
+        {
+            return _userRepository.GetByUsername(username);
+        }
         public Guid GetFirstUserId()
         {
             return _userRepository.GetFirstUserId();

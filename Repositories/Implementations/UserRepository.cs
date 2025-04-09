@@ -24,5 +24,10 @@ namespace BlogProject.Repositories.Implementations
         {
             return _context.Users.Select(u => u.Id).FirstOrDefault();
         }
+
+        public User? GetByUsername(string username)
+        {
+            return _context.Users.FirstOrDefault(u => u.Username == username);
+        }
     }
 }
