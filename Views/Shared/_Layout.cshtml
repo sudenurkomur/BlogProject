@@ -26,6 +26,28 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    <!-- 🔒 Giriş / Kayıt / Hoş geldin bölümü -->
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link text-success">Hoş geldin, @User.Identity.Name</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="/Auth/Logout">Çıkış</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Auth/Login">Giriş</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Auth/Register">Kayıt Ol</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

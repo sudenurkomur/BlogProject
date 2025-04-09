@@ -7,6 +7,8 @@ using BlogProject.Repositories.Implementations;
 using BlogProject.Repositories.Interfaces.BlogProject.Repositories.Interfaces;
 using BlogProject.Services.Interfaces;
 using BlogProject.Services.Implementations;
+using FluentValidation.AspNetCore;
+using BlogProject.Validators.BlogProject.Validators;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +33,9 @@ builder.Services.AddDbContext<BlogContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterValidator>());
 
 var app = builder.Build();
 
