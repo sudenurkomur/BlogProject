@@ -19,9 +19,11 @@ namespace BlogProject.Repositories.Implementations
         public List<Blog> GetAll()
         {
             return _context.Blogs
-                           .Include(b => b.Category)
-                           .Include(b => b.User)
-                           .ToList();
+                .Include(b => b.Category)
+                .Include(b => b.User)
+                .Include(b => b.Comments)
+                    .ThenInclude(c => c.User)
+                .ToList();
         }
 
         public Blog GetById(Guid id)

@@ -44,7 +44,7 @@
                         @if (User.Identity?.IsAuthenticated == true && blog.User.Username == User.Identity.Name)
                         {
                             <a asp-action="Delete" asp-route-id="@blog.Id" class="btn btn-danger">Sil</a>
-                        }
+                        }                       
                     </td>
                 </tr>
             }

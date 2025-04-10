@@ -9,6 +9,8 @@ using BlogProject.Services.Interfaces;
 using BlogProject.Services.Implementations;
 using FluentValidation.AspNetCore;
 using BlogProject.Validators.BlogProject.Validators;
+using BlogProject.Validators;
+using FluentValidation;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();                
 builder.Services.AddScoped<IUserRepository, UserRepository>();               // dependency injection
 
 builder.Services.AddScoped<IUserService, UserService>();              // dependency injection
+
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateCommentRequestValidator>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using BlogProject.Requests;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using BlogProject.Data.BlogProject.Data;
 
 
 
@@ -17,13 +19,15 @@ namespace BlogProject.Controllers
         private readonly IBlogService _blogService;
         private readonly ICategoryService _categoryService;
         private readonly IUserService _userService;
+        private readonly BlogContext _context;
+        private BlogContext context;
 
-
-        public BlogController(IBlogService blogService, ICategoryService categoryService, IUserService userService)
+        public BlogController(IBlogService blogService, ICategoryService categoryService, IUserService userService , BlogContext _context)
         {
             _blogService = blogService;
             _categoryService = categoryService;
             _userService = userService;
+            _context = context;
         }
 
 
