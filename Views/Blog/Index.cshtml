@@ -8,6 +8,22 @@
 
 <p class="alert alert-info">@Model?.Count adet blog bulundu.</p>
 
+<form method="get" class="mb-3">
+    <select name="categoryId" class="form-select" onchange="this.form.submit()">
+        <option value="">Tüm Kategoriler</option>
+        @{
+            string selectedCategoryId = ViewBag.SelectedCategoryId?.ToString() ?? "";
+        }
+        @foreach (var category in ViewBag.Categories)
+        {
+            var isSelected = category.Id.ToString() == selectedCategoryId ? "selected" : "";
+            <option value="@category.Id" selected="@(category.Id.ToString() == selectedCategoryId ? "selected" : null)">
+                @category.Name
+            </option>
+        }
+    </select>
+</form>
+
 @if (Model != null && Model.Any())
 {
     <table class="table table-bordered table-striped">

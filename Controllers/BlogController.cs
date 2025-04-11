@@ -32,10 +32,22 @@ namespace BlogProject.Controllers
 
         [AllowAnonymous]
         // Blogları listele
-        public IActionResult Index()
+        public IActionResult Index(Guid? categoryId)
         {
             var blogs = _blogService.GetAllBlogs();
-            return View(blogs); // Views/Blog/Index.cshtml
+
+            if (categoryId.HasValue && categoryId != Guid.Empty)
+            {
+                blogs = blogs.Where(b => b.CategoryId == categoryId).ToList();
+                ViewBag.SelectedCategoryId = categoryId.Value;
+            }
+            else
+            {
+                ViewBag.SelectedCategoryId = ""; // boş bırak
+            }
+
+            ViewBag.Categories = _categoryService.GetAll(); // Kategoriler dropdown için
+            return View(blogs);
         }
 
         // Detay

@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - BlogProject</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/BlogProject.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -35,7 +36,14 @@
                                 <span class="nav-link text-success">Hoş geldin, @User.Identity.Name</span>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Auth" asp-action="Logout">Çıkış Yap</a>
+                                <a class="nav-link" asp-controller="Profile" asp-action="Index">
+                                    <i class="bi bi-person-circle"></i> Profil
+                                </a>
+                            </li>
+                            <li class="nav-item ms-2">
+                                <a class="nav-link" href="/Auth/Logout" title="Çıkış Yap">
+                                    <i class="bi bi-box-arrow-right fs-5"></i>
+                                </a>
                             </li>
                         }
                         else

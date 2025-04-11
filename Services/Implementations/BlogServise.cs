@@ -1,22 +1,36 @@
-﻿using BlogProject.Models;
+﻿using BlogProject.Data.BlogProject.Data;
+using BlogProject.Models;
 using BlogProject.Repositories.Interfaces;
 using BlogProject.Repositories.Interfaces.BlogProject.Repositories.Interfaces;
 using BlogProject.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogProject.Services.Implementations
 {
     public class BlogService : IBlogService
     {
         private readonly IBlogRepository _blogRepository;
+        private readonly BlogContext _context;
 
-        public BlogService(IBlogRepository blogRepository)
+
+        public BlogService(IBlogRepository blogRepository , BlogContext context)
         {
             _blogRepository = blogRepository;
+            _context = context;
         }
 
         public List<Blog> GetAllBlogs()
         {
             return _blogRepository.GetAll();
+        }
+
+        public List<Blog> GetBlogsByCategoryId(Guid categoryId)
+        {
+            return _context.Blogs
+                .Where(b => b.CategoryId == categoryId)
+                .Include(b => b.Category)
+                .Include(b => b.User)
+                .ToList();
         }
 
         public Blog GetBlogById(Guid id)
