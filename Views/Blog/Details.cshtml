@@ -11,29 +11,57 @@
 <p><strong>Yayın Tarihi:</strong> @Model.PublishDate.ToShortDateString()</p>
 
 <p>@Model.Content</p>
+@if (User.Identity.IsAuthenticated &&
+    Model.User?.Username?.ToLower() == User.Identity.Name?.ToLower())
+{
+    <form asp-controller="Blog" asp-action="UpdateBlog" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
 
+        <textarea name="content" class="form-control">@Model.Content</textarea>
+        <button type="submit" class="btn btn-primary mt-2">İçeriği Güncelle</button>
+    </form>
+}
 <hr />
 
-<h4>Yorumlar</h4>
+<h4 id="yorumlar">Yorumlar</h4>
 @if (Model.Comments != null && Model.Comments.Any())
 {
-    <ul>
-        @foreach (var comment in Model.Comments)
-        {
-            <li>
-                <p>@comment.Content</p>
-                <small>— @comment.User?.Username</small>
+    <ul class="list-group">
 
-                @if (User.Identity.IsAuthenticated &&
-               comment.User?.Username == User.Identity.Name)
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            <ul class="list-group">
+                @foreach (var comment in Model.Comments.OrderBy(c => c.CreatedDate))
                 {
-                    <a asp-controller="Comment" asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-sm btn-warning">Düzenle</a>
+                    <li class="list-group-item">
+                        <p>@comment.Content</p>
+                        <small class="text-muted">@comment.User?.Username - @comment.CreatedDate.ToString("g")</small>
+                    </li>
                 }
-            </li>
+            </ul>
+        }
+        else
+        {
+            <p class="text-muted">Henüz yorum yok.</p>
         }
     </ul>
 }
 else
 {
-    <p>Henüz yorum yok.</p>
+    <p class="text-muted">Henüz yorum yok.</p>
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Add" method="post">
+        <input type="hidden" name="BlogId" value="@Model.Id" />
+        <input type="hidden" name="ParentCommentId" value="" /> <!-- Normal yorum için boş bırak -->
+        <div class="form-group">
+            <textarea name="Content" class="form-control" placeholder="Yorumunuzu yazın..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Yorum Yap</button>
+    </form>
+}
+else
+{
+    <p class="text-muted">Yorum yapabilmek için giriş yapmalısınız.</p>
 }

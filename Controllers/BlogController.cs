@@ -20,9 +20,8 @@ namespace BlogProject.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IUserService _userService;
         private readonly BlogContext _context;
-        private BlogContext context;
 
-        public BlogController(IBlogService blogService, ICategoryService categoryService, IUserService userService , BlogContext _context)
+        public BlogController(IBlogService blogService, ICategoryService categoryService, IUserService userService , BlogContext context)
         {
             _blogService = blogService;
             _categoryService = categoryService;
@@ -43,11 +42,23 @@ namespace BlogProject.Controllers
         [AllowAnonymous]
         public IActionResult Details(Guid id)
         {
-            var blog = _blogService.GetBlogById(id);
+            var blog = _context.Blogs
+                .Include(b => b.User)
+                .Include(b => b.Category)
+                .Include(b => b.Comments)
+                    .ThenInclude(c => c.User) // yorum yazan kişiyi de çek
+                .FirstOrDefault(b => b.Id == id);
+
             if (blog == null)
                 return NotFound();
 
-            return View(blog); // Views/Blog/Details.cshtml
+            // Yorumları parent-child hiyerarşisine göre grupla (nested yorum için)
+            blog.Comments = blog.Comments
+                .Where(c => c.ParentCommentId == null)
+                .OrderByDescending(c => c.CreatedDate)
+                .ToList();
+
+            return View(blog);
         }
 
         // Yeni blog (form)
@@ -108,6 +119,26 @@ namespace BlogProject.Controllers
 
             _blogService.DeleteBlog(blog);
             return RedirectToAction("Index");
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult UpdateBlog(Guid id, string content)
+        {
+            var blog = _context.Blogs.FirstOrDefault(b => b.Id == id);
+            if (blog == null)
+                return NotFound();
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (blog.UserId.ToString() != currentUserId)
+                return Forbid();
+
+            blog.Content = content;
+            blog.PublishDate = DateTime.Now;
+
+            _context.SaveChanges();
+            return RedirectToAction("Details", new { id });
         }
     }
 }

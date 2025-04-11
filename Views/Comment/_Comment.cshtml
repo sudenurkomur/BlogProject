@@ -1,0 +1,27 @@
+﻿@model BlogProject.Models.Comment
+
+<div class="mb-2 ms-@((Model.ParentCommentId != null ? 4 : 0))">
+    <p><strong>@Model.User?.Username:</strong> @Model.Content</p>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form asp-controller="Comment" asp-action="AddReply" method="post">
+            <input type="hidden" name="BlogId" value="@Model.BlogId" />
+            <input type="hidden" name="ParentCommentId" value="@Model.Id" />
+            <textarea name="Content" class="form-control mb-2" rows="2"></textarea>
+            <button type="submit" class="btn btn-sm btn-outline-primary">Cevapla</button>
+        </form>
+    }
+
+    @if (Model.Children != null && Model.Children.Any())
+    {
+        <ul>
+            @foreach (var reply in Model.Children)
+            {
+                <li>
+                    @Html.Partial("_Comment", reply)
+                </li>
+            }
+        </ul>
+    }
+</div>
