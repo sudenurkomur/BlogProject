@@ -97,7 +97,7 @@ namespace BlogProject.Controllers
             // geçici olarak göstermek için TempData
             TempData["JwtToken"] = accessToken;
 
-            // 🧪 Gelişmiş: Eğer View değil de REST API endpoint'iyse şunu dönebilirsin:
+            //  Eğer View değil de REST API endpoint'iyse
             
             return Ok(new
             {

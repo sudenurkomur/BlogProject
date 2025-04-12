@@ -1,6 +1,7 @@
 ﻿using BlogProject.Data.BlogProject.Data;
 using BlogProject.Helpers;
 using BlogProject.Models;
+using BlogProject.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -37,27 +38,29 @@ namespace BlogProject.Controllers.Api
 
         // 🔄 Refresh token endpoint
         [HttpPost("refresh")]
-        public IActionResult RefreshToken([FromBody] string refreshToken)
+        public IActionResult RefreshToken([FromBody] RefreshRequest request)
         {
+            var refreshToken = request.RefreshToken;
+
+            if (string.IsNullOrEmpty(refreshToken))
+                return BadRequest("Refresh token eksik.");
+
             var user = _context.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
 
             if (user == null || user.RefreshTokenExpires < DateTime.Now)
                 return Unauthorized("Geçersiz veya süresi dolmuş refresh token.");
 
-            // Yeni token oluştur
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            };
+    {
+        new Claim(ClaimTypes.Name, user.Username),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+    };
 
             var newAccessToken = _jwtTokenHelper.GenerateAccessToken(claims);
             var newRefreshToken = _jwtTokenHelper.GenerateRefreshToken();
 
-            // Refresh token'ı güncelle
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpires = DateTime.Now.AddDays(7);
-
             _context.SaveChanges();
 
             return Ok(new
