@@ -1,4 +1,4 @@
-using BlogProject.Data;
+﻿using BlogProject.Data;
 using BlogProject.Data.BlogProject.Data;
 using Microsoft.EntityFrameworkCore;
 using BlogProject.Data.Seed;
@@ -11,54 +11,68 @@ using FluentValidation.AspNetCore;
 using BlogProject.Validators.BlogProject.Validators;
 using BlogProject.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using BlogProject.Helpers;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// JWT Ayarları
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
-builder.Services.AddScoped<IBlogService, BlogService>();   // dependency injection
+// JWT Authentication Ekleme
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "UserCookie"; // varsayılan cookie olacak
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddCookie("UserCookie", options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
 
-builder.Services.AddScoped<IBlogRepository, BlogRepository>();  // dependency injection
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
 
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();        // dependency injection
-
-builder.Services.AddScoped<ICategoryService, CategoryService>();                // dependency injection
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();               // dependency injection
-
-builder.Services.AddScoped<IUserService, UserService>();              // dependency injection
-
+builder.Services.AddScoped<IBlogService, BlogService>();   //dependency injection
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();               //dependency injection
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();        //dependency injection
+builder.Services.AddScoped<ICategoryService, CategoryService>();       //dependency injection
+builder.Services.AddScoped<IUserRepository, UserRepository>();        //dependency injection
+builder.Services.AddScoped<IUserService, UserService>();          //dependency injection
+builder.Services.AddScoped<JwtTokenHelper>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateCommentRequestValidator>();
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<BlogContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllersWithViews()
     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterRequestValidator>());
 
-builder.Services.AddAuthentication("UserCookie")
-    .AddCookie("UserCookie", options =>
-    {
-        options.LoginPath = "/Auth/Login";
-        options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    });
+builder.Services.AddDbContext<BlogContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
 DataSeeder.Seed(app);
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -67,8 +81,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
-
+app.UseAuthentication(); // JWT + Cookie auth
 app.UseAuthorization();
 
 app.MapControllerRoute(

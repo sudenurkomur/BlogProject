@@ -11,6 +11,9 @@
         // Navigation
         public ICollection<Blog> Blogs { get; set; }
         public ICollection<Comment> Comments { get; set; }
+
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpires { get; set; }
     }
 
 }

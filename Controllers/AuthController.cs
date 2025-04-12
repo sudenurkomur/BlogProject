@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using BCrypt.Net;
+using BlogProject.Helpers;
 
 namespace BlogProject.Controllers
 {
@@ -15,10 +16,12 @@ namespace BlogProject.Controllers
     public class AuthController : Controller
     {
         private readonly BlogContext _context;
+        private readonly JwtTokenHelper _jwtHelper;
 
-        public AuthController(BlogContext context)
+        public AuthController(BlogContext context, JwtTokenHelper jwtHelper)
         {
             _context = context;
+            _jwtHelper = jwtHelper;
         }
 
         [HttpGet]
@@ -73,15 +76,37 @@ namespace BlogProject.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())               
             };
 
+            // ✅ Access ve Refresh Token oluştur
+            var accessToken = _jwtHelper.GenerateAccessToken(claims);
+            var refreshToken = _jwtHelper.GenerateRefreshToken();
+
+            // 🔁 RefreshToken bilgisini kaydet
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpires = DateTime.Now.AddDays(7);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            // cookie login işlemi 
             var identity = new ClaimsIdentity(claims, "UserCookie");
             var principal = new ClaimsPrincipal(identity);
-
             await HttpContext.SignInAsync("UserCookie", principal);
 
-            return RedirectToAction("Index", "Home");
+            // geçici olarak göstermek için TempData
+            TempData["JwtToken"] = accessToken;
+
+            // 🧪 Gelişmiş: Eğer View değil de REST API endpoint'iyse şunu dönebilirsin:
+            
+            return Ok(new
+            {
+                Token = accessToken,
+                RefreshToken = refreshToken
+            });
+            
+
+            //return RedirectToAction("Index", "Home");
         }
 
         [Authorize] // Çıkış yapmak sadece giriş yapanlara açık
@@ -98,5 +123,7 @@ namespace BlogProject.Controllers
             var hashed = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(hashed);
         }
+
+
     }
 }
