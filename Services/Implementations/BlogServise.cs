@@ -12,7 +12,6 @@ namespace BlogProject.Services.Implementations
         private readonly IBlogRepository _blogRepository;
         private readonly BlogContext _context;
 
-
         public BlogService(IBlogRepository blogRepository , BlogContext context)
         {
             _blogRepository = blogRepository;
