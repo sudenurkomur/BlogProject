@@ -14,6 +14,7 @@ namespace BlogProject.Repositories.Interfaces
             void Add(Blog blog);
             void Update(Blog blog);
             void Delete(Blog blog);
+            Task AddBlogAsync(Blog blog);
         }
     }
 }

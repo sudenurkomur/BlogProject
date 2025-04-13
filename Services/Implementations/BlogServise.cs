@@ -52,5 +52,10 @@ namespace BlogProject.Services.Implementations
         {
             _blogRepository.Delete(blog);
         }
+
+        public async Task AddBlogAsync(Blog blog)
+        {
+            await _blogRepository.AddBlogAsync(blog);
+        }
     }
 }

@@ -79,11 +79,11 @@ namespace BlogProject.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())               
             };
 
-            // ✅ Access ve Refresh Token oluştur
+            //  Access ve Refresh Token oluştur
             var accessToken = _jwtHelper.GenerateAccessToken(claims);
             var refreshToken = _jwtHelper.GenerateRefreshToken();
 
-            // 🔁 RefreshToken bilgisini kaydet
+            //  RefreshToken bilgisini kaydet
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpires = DateTime.Now.AddDays(7);
             _context.Users.Update(user);
@@ -98,15 +98,15 @@ namespace BlogProject.Controllers
             TempData["JwtToken"] = accessToken;
 
             //  Eğer View değil de REST API endpoint'iyse
-            
+            /*
             return Ok(new
             {
                 Token = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken               // kontrol etmen gerekirse
             });
-            
+            */
 
-            //return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize] // Çıkış yapmak sadece giriş yapanlara açık
@@ -115,13 +115,6 @@ namespace BlogProject.Controllers
         {
             await HttpContext.SignOutAsync("UserCookie");
             return RedirectToAction("Login", "Auth");
-        }
-
-        private string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var hashed = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(hashed);
         }
 
 

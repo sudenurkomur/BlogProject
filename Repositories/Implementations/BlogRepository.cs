@@ -52,5 +52,11 @@ namespace BlogProject.Repositories.Implementations
             _context.Blogs.Remove(blog);
             _context.SaveChanges();
         }
+
+        public async Task AddBlogAsync(Blog blog)
+        {
+            await _context.Blogs.AddAsync(blog);
+            await _context.SaveChangesAsync();
+        }
     }
 }

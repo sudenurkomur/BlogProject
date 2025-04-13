@@ -60,11 +60,16 @@ builder.Services.AddScoped<IUserService, UserService>();          //dependency i
 builder.Services.AddScoped<JwtTokenHelper>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateCommentRequestValidator>();
 
-builder.Services.AddControllersWithViews()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterRequestValidator>());
+builder.Services.AddControllers()
+    .AddJsonOptions(x =>
+        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddDbContext<BlogContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllersWithViews()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterRequestValidator>());
+
 
 var app = builder.Build();
 
@@ -80,7 +85,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.MapControllers();
 app.UseAuthentication(); // JWT + Cookie auth
 app.UseAuthorization();
 

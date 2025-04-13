@@ -1,4 +1,5 @@
 ﻿using BlogProject.Models;
+using System.Threading.Tasks;
 
 namespace BlogProject.Services.Interfaces
 {
@@ -10,6 +11,7 @@ namespace BlogProject.Services.Interfaces
         void AddBlog(Blog blog);
         void UpdateBlog(Blog blog);
         void DeleteBlog(Blog blog);
+        Task AddBlogAsync(Blog blog);
 
     }
 }
