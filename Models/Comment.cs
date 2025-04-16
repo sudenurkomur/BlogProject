@@ -17,8 +17,8 @@
         public Blog? Blog { get; set; }
 
         public Guid? ParentCommentId { get; set; }                     // nested yorumlar için
-        public Comment? ParentComment { get; set; }
         public List<Comment> Children { get; set; } = new();
+        public List<Comment>? Replies { get; set; } // Alt yorumlar
 
     }
 

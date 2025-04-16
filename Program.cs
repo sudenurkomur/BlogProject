@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BlogProject.Helpers;
+using System.Security.Claims;
+using System.Net.Http.Headers;
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +63,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();        //dependen
 builder.Services.AddScoped<IUserService, UserService>();          //dependency injection
 builder.Services.AddScoped<JwtTokenHelper>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateCommentRequestValidator>();
+builder.Services.AddHttpClient<GeminiService>();
+
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(x =>
@@ -92,5 +99,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

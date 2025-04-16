@@ -12,6 +12,8 @@ namespace BlogProject.Services.Interfaces
         void UpdateBlog(Blog blog);
         void DeleteBlog(Blog blog);
         Task AddBlogAsync(Blog blog);
+        List<Blog> GetPagedBlogs(int page, int pageSize);
+        int GetTotalBlogCount(); // Sayfa sayısını hesaplamak için
 
     }
 }

@@ -76,7 +76,8 @@ namespace BlogProject.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())               
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role ?? "User")
             };
 
             //  Access ve Refresh Token oluştur
@@ -102,7 +103,7 @@ namespace BlogProject.Controllers
             return Ok(new
             {
                 Token = accessToken,
-                RefreshToken = refreshToken               // kontrol etmen gerekirse
+                RefreshToken = refreshToken               // kontrol etmem gerekirse
             });
             */
 

@@ -17,26 +17,13 @@ namespace BlogProject.Data.Seed
             if (!context.Categories.Any())
             {
                 context.Categories.AddRange(
-                    new Category { Name = "Teknoloji" },
+                    new Category { Name = "Gezilecek Yerler" },
                     new Category { Name = "Yazılım" },
                     new Category { Name = "Genel" }
                 );
                 context.SaveChanges();
             }
 
-            // Kullanıcı
-            if (!context.Users.Any())
-            {
-                var user = new User
-                {
-                    Username = "admin",
-                    Email = "admin@mail.com",
-                    PasswordHash = "1234", 
-                    Role = "Admin"
-                };
-                context.Users.Add(user);
-                context.SaveChanges();
-            }
 
             // Blog
             if (!context.Blogs.Any())

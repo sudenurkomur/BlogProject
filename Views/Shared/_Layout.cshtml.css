@@ -38,11 +38,12 @@ button.accept-policy {
   font-size: 1rem;
   line-height: inherit;
 }
+<span class="premium-badge ms-2 d-flex align-items-center mt-1" >
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
 }

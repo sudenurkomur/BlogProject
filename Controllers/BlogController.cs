@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using BlogProject.Data.BlogProject.Data;
+using BlogProject.Helpers;
 
 
 
@@ -20,20 +21,32 @@ namespace BlogProject.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IUserService _userService;
         private readonly BlogContext _context;
+        private readonly GeminiService _geminiService;
 
-        public BlogController(IBlogService blogService, ICategoryService categoryService, IUserService userService , BlogContext context)
+        public BlogController(IBlogService blogService, ICategoryService categoryService, IUserService userService , BlogContext context, GeminiService geminiService)
         {
             _blogService = blogService;
             _categoryService = categoryService;
             _userService = userService;
             _context = context;
+            _geminiService = geminiService;
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Premium")]
+        public async Task<IActionResult> FixGrammar([FromBody] FixGrammarRequest request)
+        {
+            var fixedText = await _geminiService.FixGrammarAsync(request.Text);
+            return Content(fixedText);
+        }
 
         [AllowAnonymous]
-        // Blogları listele
-        public IActionResult Index(Guid? categoryId)
+        [Route("Blog")]
+        [Route("Blog/Page/{page?}")]
+        public IActionResult Index(Guid? categoryId, int page = 1)
         {
+            int pageSize = 5;
+
             var blogs = _blogService.GetAllBlogs();
 
             if (categoryId.HasValue && categoryId != Guid.Empty)
@@ -43,11 +56,19 @@ namespace BlogProject.Controllers
             }
             else
             {
-                ViewBag.SelectedCategoryId = ""; // boş bırak
+                ViewBag.SelectedCategoryId = "";
             }
 
-            ViewBag.Categories = _categoryService.GetAll(); // Kategoriler dropdown için
-            return View(blogs);
+            var pagedBlogs = blogs
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)blogs.Count / pageSize);
+            ViewBag.Categories = _categoryService.GetAll();
+
+            return View(pagedBlogs);
         }
 
         // Detay
@@ -90,6 +111,7 @@ namespace BlogProject.Controllers
                 ViewBag.Categories = _categoryService.GetAll();
                 return View(request);
             }
+            Console.WriteLine("Gelen Kategori ID: " + request.CategoryId);
 
             var username = User.Identity?.Name;
             var user = _userService.GetByUsername(username); 
@@ -116,7 +138,6 @@ namespace BlogProject.Controllers
         }
 
 
-        // Sil
         public IActionResult Delete(Guid id)
         {
             var blog = _blogService.GetBlogById(id);
@@ -125,13 +146,24 @@ namespace BlogProject.Controllers
 
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (blog.UserId.ToString() != currentUserId)
+                return Forbid();
+
+            // 1. Nested yorumları sil
+            var comments = _context.Comments
+                .Where(c => c.BlogId == blog.Id)
+                .ToList();
+
+            if (comments.Any())
             {
-                return Forbid(); // başka birinin blogunu silemez
+                _context.Comments.RemoveRange(comments);
+                _context.SaveChanges(); // yorumlar silinsin
             }
 
+            // 2. Blogu sil
             _blogService.DeleteBlog(blog);
             return RedirectToAction("Index");
         }
+
 
 
         [HttpPost]

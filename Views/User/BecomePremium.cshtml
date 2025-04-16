@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Premium Üyelik";
+}
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg border-0" style="max-width: 500px; width: 100%;">
+        <div class="card-body text-center">
+            <h3 class="card-title text-primary mb-3">
+                ⭐ Premium Üyelik Satın Al
+            </h3>
+            <p class="card-text text-muted">
+                Premium kullanıcı olarak <strong>yazım denetimi</strong> özelliğini kullanabilirsin.<br />
+                Blog yazarken veya yorum yaparken daha profesyonel bir deneyim seni bekliyor!
+            </p>
+
+            <form asp-action="ConfirmPremium" method="post">
+                <button type="submit" class="btn btn-success btn-lg mt-3">
+                    🪙 Ödeme Yap ve Premium Ol
+                </button>
+            </form>
+
+            @if (TempData["PremiumSuccess"] != null)
+            {
+                <div class="alert alert-success mt-4">
+                    🎉 @TempData["PremiumSuccess"]
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -16,8 +16,14 @@
 
     <div class="mb-3">
         <label asp-for="Content" class="form-label"></label>
-        <textarea asp-for="Content" class="form-control" rows="4"></textarea>
+        <textarea asp-for="Content" class="form-control" rows="4" id="contentArea"></textarea>
         <span asp-validation-for="Content" class="text-danger"></span>
+
+        @* ✨ Premium kullanıcıya özel buton *@
+        @if (User.IsInRole("Premium"))
+        {
+            <button type="button" id="fixGrammarBtn" class="btn btn-outline-primary mt-2">✏ Yazım Hatalarını Düzelt</button>
+        }
     </div>
 
     <div class="mb-3">
@@ -44,4 +50,25 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+       @*ajax*@
+    <script>
+        document.getElementById("fixGrammarBtn")?.addEventListener("click", async function () {
+            const content = document.getElementById("contentArea").value;
+
+            const response = await fetch("/Blog/FixGrammar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: content })
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                document.getElementById("contentArea").value = result;
+            } else {
+                alert("Yazım düzeltme işlemi başarısız oldu.");
+            }
+        });
+    </script>
 }

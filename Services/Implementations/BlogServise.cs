@@ -23,6 +23,18 @@ namespace BlogProject.Services.Implementations
             return _blogRepository.GetAll();
         }
 
+        public List<Blog> GetPagedBlogs(int page, int pageSize)
+        {
+            return _blogRepository.GetAll()
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public int GetTotalBlogCount()
+        {
+            return _blogRepository.GetAll().Count;
+        }
         public List<Blog> GetBlogsByCategoryId(Guid categoryId)
         {
             return _context.Blogs

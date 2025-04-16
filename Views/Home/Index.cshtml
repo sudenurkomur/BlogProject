@@ -1,17 +1,44 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Hoş Geldin";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="container mt-5">
+    <div class="row justify-content-center text-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <h1 class="display-4 text-primary mb-4">
+                        <i class="bi bi-journal-text me-2"></i> Blog Project'e Hoş Geldin!
+                    </h1>
+                    <p class="lead text-secondary">
+                        Bu site, <strong>yazılımcıların yazılım hakkında bilgileri</strong> ve <strong>gezdikleri yerler</strong> ile ilgili içeriklerini paylaşabildiği özel bir platformdur.
+                    </p>
 
-@if (TempData["JwtToken"] != null)
-{
-    <div class="alert alert-success">
-        <strong>JWT Token:</strong><br />
-        <code style="word-break: break-all;">@TempData["JwtToken"]</code>
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-center gap-4 mt-4">
+                        <a href="/Blog" class="btn btn-outline-primary btn-lg px-4">
+                            <i class="bi bi-card-list me-2"></i> Blogları Keşfet
+                        </a>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Auth/Register" class="btn btn-primary btn-lg">
+                                <i class="bi bi-person-plus"></i> Kayıt Ol
+                            </a>
+                        }
+                    </div>
+
+                    @* JWT Token Gösterimi (isteğe bağlı) 
+                    @if (TempData["JwtToken"] != null)
+                    {
+                        <div class="alert alert-success mt-4 text-start">
+                            <strong>JWT Token:</strong><br />
+                            <code style="word-break: break-word;">@TempData["JwtToken"]</code>
+                        </div>
+                    }
+                    *@
+                </div>
+            </div>
+        </div>
     </div>
-}              // jwt token görüntülemek için   
-
+</div>

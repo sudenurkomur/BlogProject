@@ -7,5 +7,6 @@ namespace BlogProject.Services.Interfaces
         List<User> GetAll();
         Guid GetFirstUserId();
         User GetByUsername(string username);
+        Task MakeUserPremiumAsync(string userId);
     }
 }

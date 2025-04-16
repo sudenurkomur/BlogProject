@@ -104,8 +104,6 @@ namespace BlogProject.Migrations
 
                     b.HasIndex("BlogId");
 
-                    b.HasIndex("ParentCommentId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
@@ -144,6 +142,21 @@ namespace BlogProject.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("CommentComment", b =>
+                {
+                    b.Property<Guid>("ChildrenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RepliesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ChildrenId", "RepliesId");
+
+                    b.HasIndex("RepliesId");
+
+                    b.ToTable("CommentComment");
+                });
+
             modelBuilder.Entity("BlogProject.Models.Blog", b =>
                 {
                     b.HasOne("BlogProject.Models.Category", "Category")
@@ -168,24 +181,33 @@ namespace BlogProject.Migrations
                     b.HasOne("BlogProject.Models.Blog", "Blog")
                         .WithMany("Comments")
                         .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("BlogProject.Models.Comment", "ParentComment")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentCommentId");
 
                     b.HasOne("BlogProject.Models.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Blog");
 
-                    b.Navigation("ParentComment");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CommentComment", b =>
+                {
+                    b.HasOne("BlogProject.Models.Comment", null)
+                        .WithMany()
+                        .HasForeignKey("ChildrenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlogProject.Models.Comment", null)
+                        .WithMany()
+                        .HasForeignKey("RepliesId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlogProject.Models.Blog", b =>
@@ -196,11 +218,6 @@ namespace BlogProject.Migrations
             modelBuilder.Entity("BlogProject.Models.Category", b =>
                 {
                     b.Navigation("Blogs");
-                });
-
-            modelBuilder.Entity("BlogProject.Models.Comment", b =>
-                {
-                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("BlogProject.Models.User", b =>

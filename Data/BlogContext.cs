@@ -29,14 +29,14 @@ namespace BlogProject.Data
                     .HasOne(c => c.Blog)
                     .WithMany(b => b.Comments)
                     .HasForeignKey(c => c.BlogId)
-                    .OnDelete(DeleteBehavior.NoAction); // Veya DeleteBehavior.NoAction
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 // Comment → User
                 modelBuilder.Entity<Comment>()
                     .HasOne(c => c.User)
                     .WithMany(u => u.Comments)
                     .HasForeignKey(c => c.UserId)
-                    .OnDelete(DeleteBehavior.NoAction); // Veya DeleteBehavior.NoAction
+                    .OnDelete(DeleteBehavior.Cascade);
             }
         }
     }
