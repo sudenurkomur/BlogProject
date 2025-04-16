@@ -15,7 +15,7 @@ Bu proje, kullanıcıların blog yazıları oluşturabileceği, yorum yapabilece
   - Yorum sahibi dışındakilerin düzenleme yapamaması
 - 🧠 **Gemini API Entegrasyonu**
   - Premium kullanıcılar için "Yazım Hatalarını Düzelt" butonu
-  - OpenAI API üzerinden içerik düzeltme
+  - Gemini API üzerinden içerik düzeltme
 - 📄 **Kategoriye Göre Filtreleme**
   - Yeni kategori ekleyebilme
   - Aynı kategori varsa tekrar eklememe kontrolü
