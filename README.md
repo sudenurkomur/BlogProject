@@ -19,6 +19,9 @@ Bu proje, kullanıcıların blog yazıları oluşturabileceği, yorum yapabilece
 - 📄 **Kategoriye Göre Filtreleme**
   - Yeni kategori ekleyebilme
   - Aynı kategori varsa tekrar eklememe kontrolü
+- 🆔 **Veri Tasarımı**
+  - Tüm entity ID’leri Guid olarak tanımlanmıştır.
+  - Blog görselleri veritabanında Base64 formatında saklanmaktadır.
 - 🌐 **RESTful API Geliştirme**
   - JWT Token korumalı API endpoint’leri (GET, POST, PUT, DELETE)
 - 💎 **Frontend**
