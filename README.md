@@ -30,6 +30,30 @@ Bu proje, kullanıcıların blog yazıları oluşturabileceği, yorum yapabilece
 - 💰 **Premium Üyelik Simülasyonu**
   - Ödeme simülasyonu sonrası rol güncelleme
   - Navbar’da “⭐ Premiumsun!” uyarısı
+ 
+## 📸 Ekran Görüntüleri
+
+### 🏠 Ana Ekran
+![Ana Ekran](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/AnaEkran.png)
+
+### 📃 Blog Detayı
+![Blog Detayı](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/BlogDetayı.png)
+
+### 📋 Blog Listesi
+![Blog Listesi](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/BlogListesi.png)
+
+### 🔐 Giriş Yap
+![Giriş Yap](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/GirişYap.png)
+
+### 📝 Kayıt Ol
+![Kayıt Ol](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/KayıtOl.png)
+
+### 💎 Premium Üyelik
+![Premium Ol](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/PremiumOl.png)
+
+### 👤 Profil Sayfası
+![Profil](https://raw.githubusercontent.com/sudenurkomur/BlogProject/main/assets/Profil.png)
+
 
 ## 📦 Kullanılan Teknolojiler
 
